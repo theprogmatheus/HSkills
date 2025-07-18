@@ -29,6 +29,7 @@ dependencies {
 
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT") // Aikar Commands Framework
     implementation("com.j256.ormlite:ormlite-jdbc:6.1") // ORMLite dependency to Databases
+    implementation("javax.inject:javax.inject:1") // JSR330 API javax.inject dependency
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -59,6 +60,7 @@ tasks {
         dependsOn(test)
         mustRunAfter(test)
         relocate("co.aikar", "com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.acf")
+        relocate("com.j256.ormlite", "com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.ormlite")
     }
 
     test {

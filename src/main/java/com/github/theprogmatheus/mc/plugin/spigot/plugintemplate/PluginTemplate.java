@@ -7,6 +7,7 @@ public class PluginTemplate extends JavaPlugin {
 
     @Override
     public void onLoad() {
+
     }
 
     @Override
