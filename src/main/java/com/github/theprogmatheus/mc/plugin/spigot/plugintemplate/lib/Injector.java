@@ -1,4 +1,4 @@
-package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.util.injection;
+package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib;
 
 
 import javax.inject.Inject;
@@ -16,13 +16,22 @@ public class Injector {
     private final Map<Class<?>, Object> singletons = new HashMap<>();
     private final ThreadLocal<Set<Class<?>>> building = ThreadLocal.withInitial(HashSet::new);
 
+    public Injector() {
+        registerSingleton(Injector.class, this);
+    }
+
     public <T> void registerSingleton(Class<T> clazz, T instance) {
-        singletons.put(clazz, instance);
+        registerSingleton(new Class[]{clazz}, instance);
+    }
+
+    public <T> void registerSingleton(Class<?>[] classes, T instance) {
+        for (Class<?> clazz : classes)
+            singletons.put(clazz, instance);
     }
 
     public <T> T getInstance(Class<T> clazz) {
 
-        if (isSingleton(clazz) && singletons.containsKey(clazz))
+        if (singletons.containsKey(clazz))
             return (T) singletons.get(clazz);
 
         if (building.get().contains(clazz))

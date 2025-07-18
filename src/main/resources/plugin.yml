@@ -6,3 +6,4 @@ authors:
   - ${authors}
 website: ${website}
 description: ${description}
+libraries: ${libraries}
