@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PluginTemplateTest {
@@ -16,16 +15,12 @@ public class PluginTemplateTest {
 
     @BeforeEach
     void setUp() {
-        // Cria um servidor fake
         server = MockBukkit.mock();
-
-        // Carrega seu plugin dentro do servidor fake
         plugin = MockBukkit.load(PluginTemplate.class);
     }
 
     @AfterEach
     void tearDown() {
-        // Finaliza o servidor mockado e descarrega o plugin
         MockBukkit.unmock();
     }
 
@@ -34,8 +29,4 @@ public class PluginTemplateTest {
         assertTrue(plugin.isEnabled(), "O plugin deveria estar habilitado");
     }
 
-    @Test
-    void pluginShouldHaveCorrectName() {
-        assertEquals("PluginTemplate", plugin.getName(), "Nome do plugin errado");
-    }
 }

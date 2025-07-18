@@ -28,7 +28,7 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
 
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT") // Aikar Commands Framework
-    implementation("com.google.inject:guice:6.0.0") // Guice for dependency injections
+    implementation("com.j256.ormlite:ormlite-jdbc:6.1") // ORMLite dependency to Databases
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
