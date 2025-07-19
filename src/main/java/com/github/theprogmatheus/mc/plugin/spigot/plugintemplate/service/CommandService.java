@@ -9,6 +9,7 @@ import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.env.Conf
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.util.LocaleUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import java.util.Locale;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 @Singleton
+@Getter
 public class CommandService extends PluginService {
 
     private final PluginTemplate plugin;
@@ -38,7 +40,7 @@ public class CommandService extends PluginService {
     @Override
     public void startup() {
         this.commandManager = new PaperCommandManager(this.plugin);
-        this.commandManager.usePerIssuerLocale(false, false);
+        this.commandManager.usePerIssuerLocale(Config.LANG_INDIVIDUAL.getValue(), false);
         this.commandManager.getLocales().setDefaultLocale(getDefaultLocale());
         registerAllCommands();
     }
@@ -46,7 +48,7 @@ public class CommandService extends PluginService {
     private Locale getDefaultLocale() {
         var defaultLocale = LocaleUtils.getLocaleByString(Config.LANG_DEFAULT.getValue());
         if (defaultLocale == null)
-            defaultLocale = Locales.PORTUGUESE;
+            defaultLocale = Locales.ENGLISH;
         return defaultLocale;
     }
 

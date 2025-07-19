@@ -1,9 +1,9 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.listener.TemplateListener;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.listener.lang.PlayerJoinLangConfig;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -26,7 +26,7 @@ public class ListenerService extends PluginService {
      * Register your listeners here
      */
     private void registerAllListeners() {
-        registerListener(TemplateListener.class);
+        registerListener(PlayerJoinLangConfig.class);
     }
 
     private void unregisterAllListeners() {

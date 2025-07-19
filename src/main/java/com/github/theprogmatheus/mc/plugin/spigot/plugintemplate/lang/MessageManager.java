@@ -51,12 +51,11 @@ public class MessageManager {
     /**
      * You can change this if you need
      */
-    private Locale getPlayerLocale(Player player) {
+    public Locale getPlayerLocale(Player player) {
         return getPlayerLocaleByClient(player);
     }
 
     private Locale getPlayerLocaleByClient(Player player) {
-        logger.info("getPlayerLocaleByClient(%s) -> %s".formatted(player.getName(), player.getLocale()));
         var locale = LocaleUtils.getLocaleByString(player.getLocale());
         return locale == null ? getDefaultLocale() : locale;
     }
