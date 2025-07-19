@@ -1,6 +1,6 @@
-package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.repository;
+package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.sql.repository;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.entity.PlayerData;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.sql.entity.PlayerData;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;

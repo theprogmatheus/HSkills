@@ -2,7 +2,7 @@ package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.DatabaseManager;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.sql.DatabaseSQLManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import com.zaxxer.hikari.HikariConfig;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,12 @@ import java.sql.SQLException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 @Singleton
-public class DatabaseService extends AbstractService {
+public class DatabaseSQLService extends AbstractService {
 
 
     private final PluginTemplate plugin;
     private final Injector injector;
-    private DatabaseManager databaseManager;
+    private DatabaseSQLManager databaseManager;
 
 
     /**
@@ -38,7 +38,7 @@ public class DatabaseService extends AbstractService {
 
     @Override
     public void startup() {
-        this.databaseManager = new DatabaseManager(this.injector, loadDatabaseConfig());
+        this.databaseManager = new DatabaseSQLManager(this.injector, loadDatabaseConfig());
         try {
             this.databaseManager.openConnection();
         } catch (SQLException e) {

@@ -1,6 +1,6 @@
-package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database;
+package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.sql;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.repository.PlayerDataRepository;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.sql.repository.PlayerDataRepository;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 @Getter
 @RequiredArgsConstructor
-public class DatabaseManager {
+public class DatabaseSQLManager {
 
     private final Injector injector;
     private final HikariConfig databaseConfig;
