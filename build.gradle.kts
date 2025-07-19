@@ -18,7 +18,8 @@ val pluginDependencies = listOf(
     "javax.inject:javax.inject:1",
     "net.gmcbm.dependencies:acf-paper:0.5.2",
     "com.j256.ormlite:ormlite-jdbc:6.1",
-    "com.zaxxer:HikariCP:6.1.0"
+    "com.zaxxer:HikariCP:6.1.0",
+    "org.xerial:sqlite-jdbc:3.50.2.0"
 )// Repository: https://repo.papermc.io/
 val supportsLibraries = true
 

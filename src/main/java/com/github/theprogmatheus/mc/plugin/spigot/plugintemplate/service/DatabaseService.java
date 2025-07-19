@@ -1,5 +1,6 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.DatabaseManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.sql.SQLException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -15,6 +17,7 @@ import java.sql.SQLException;
 public class DatabaseService extends AbstractService {
 
 
+    private final PluginTemplate plugin;
     private final Injector injector;
     private DatabaseManager databaseManager;
 
@@ -23,12 +26,12 @@ public class DatabaseService extends AbstractService {
      * Change how to load the database config
      */
     private HikariConfig loadDatabaseConfig() {
-        var config = new HikariConfig();
 
-        config.setJdbcUrl("jdbc:mariadb://localhost/databaseName");
-        config.setUsername("username");
-        config.setPassword("password");
-        config.setMaximumPoolSize(10);
+        this.plugin.getDataFolder().mkdirs();
+        var storageFile = new File(this.plugin.getDataFolder(), "storage.db");
+
+        var config = new HikariConfig();
+        config.setJdbcUrl("jdbc:sqlite:%s".formatted(storageFile.toPath().toAbsolutePath()));
 
         return config;
     }
