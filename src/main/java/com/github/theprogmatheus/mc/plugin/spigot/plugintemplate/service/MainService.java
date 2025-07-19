@@ -1,7 +1,7 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -23,13 +23,11 @@ public class MainService extends PluginService {
      * Register your services here
      */
     public void setupServices() {
+        addService(ConfigurationService.class);
+        addService(DatabaseSQLService.class, 10, -10); // or DatabaseMongoService.class
         addService(CommandService.class);
         addService(ListenerService.class);
-        addService(DatabaseSQLService.class, 10, -10);
-        // addService(DatabaseMongoService.class, 10, -10);
         addService(APIService.class);
-
-        // all services here
     }
 
     @Override
