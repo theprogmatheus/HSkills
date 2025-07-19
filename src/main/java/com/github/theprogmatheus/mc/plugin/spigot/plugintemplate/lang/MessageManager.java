@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import static com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.ConfigurationFile.LOG_FORMAT;
+import static com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.ConfigurationManager.LOG_FORMAT;
 
 @RequiredArgsConstructor
 @Getter

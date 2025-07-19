@@ -42,14 +42,18 @@ public class DatabaseSQLService extends PluginService {
             dataFolder.mkdirs();
 
         var config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:%s".formatted(storageFile.toPath().toAbsolutePath()));
-
+        config.setDriverClassName("org.h2.Driver");
+        config.setJdbcUrl("jdbc:h2:file:%s".formatted(storageFile.toPath().toAbsolutePath()));
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         return config;
     }
 
     private HikariConfig loadTestDatabaseConfig() {
         var config = new HikariConfig();
         String dbName = UUID.randomUUID().toString();
+        config.setDriverClassName("org.h2.Driver");
         config.setJdbcUrl("jdbc:h2:mem:%s;DB_CLOSE_DELAY=-1".formatted(dbName));
         return config;
     }

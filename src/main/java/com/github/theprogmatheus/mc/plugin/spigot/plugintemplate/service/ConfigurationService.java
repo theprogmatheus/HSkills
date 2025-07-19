@@ -1,9 +1,10 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.ConfigurationFile;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.ConfigurationManager;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.env.Config;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
+@Getter
 public class ConfigurationService extends PluginService {
 
     private final PluginTemplate plugin;
@@ -22,23 +24,15 @@ public class ConfigurationService extends PluginService {
     /**
      * Register your configs here
      */
-    private void registerAllConfigs() {
-        registerConfig("config.yml");
+    private ConfigurationManager configureAllConfigs() {
+        return this.configurationManager
+                .addConfigurationClass(Config.class);
     }
 
     @Override
     public void startup() {
         this.configurationManager = new ConfigurationManager(logger, plugin.getDataFolder());
-        registerAllConfigs();
+        configureAllConfigs()
+                .mapConfigurationClasses();
     }
-
-    private void registerConfig(String configPath) {
-        this.configurationManager.register(configPath);
-    }
-
-    public ConfigurationFile getConfig(String configName) {
-        return this.configurationManager.get(configName);
-    }
-
-
 }

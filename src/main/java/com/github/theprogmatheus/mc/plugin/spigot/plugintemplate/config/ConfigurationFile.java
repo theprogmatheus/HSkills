@@ -12,11 +12,12 @@ import java.nio.file.Files;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+import static com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.ConfigurationManager.LOG_FORMAT;
+
 @RequiredArgsConstructor
 @Getter
 public class ConfigurationFile extends YamlConfiguration {
 
-    public static final String LOG_FORMAT = "[CONFIG] %s";
 
     private final Logger logger;
     private final File file;

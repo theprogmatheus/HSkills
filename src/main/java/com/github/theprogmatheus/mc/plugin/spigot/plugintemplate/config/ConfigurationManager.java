@@ -3,17 +3,87 @@ package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class ConfigurationManager {
 
+
+    public static final String LOG_FORMAT = "[CONFIG] %s";
+
     private final Logger logger;
     private final File dataFolder;
-
     private final Map<String, ConfigurationFile> configs = new ConcurrentHashMap<>();
+    private final List<Class<?>> configClasses = new ArrayList<>();
+
+
+    public ConfigurationManager mapConfigurationClasses() {
+        for (var configClass : configClasses) {
+            var configAnnotation = getConfigurationAnnotation(configClass);
+
+            if (configAnnotation == null)
+                continue;
+
+            var configName = configAnnotation.value();
+            var configResourcePath = configAnnotation.resourcePath();
+
+            if (configName == null || configName.isBlank())
+                continue;
+
+            var configFile = configResourcePath == null || configResourcePath.isBlank() ?
+                    register(configName) : register(configName, configResourcePath);
+
+            Stream.of(configClass.getFields()).forEach(field -> injectFieldConfigValue(field, configFile));
+        }
+        return this;
+    }
+
+    private Configuration getConfigurationAnnotation(Class<?> configClass) {
+        if (configClass == null)
+            return null;
+        return configClass.getAnnotation(Configuration.class);
+    }
+
+    private void injectFieldConfigValue(Field field, ConfigurationFile config) {
+        if (field == null || config == null)
+            return;
+
+        var modifiers = field.getModifiers();
+        if (!(Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) &&
+                ConfigurationHolder.class.isAssignableFrom(field.getType())))
+            return;
+
+        try {
+            field.setAccessible(true);
+            if (field.get(null) instanceof ConfigurationHolder<?> holder) {
+                var configValue = config.get(holder.getPath());
+                if (holder.getType().isInstance(configValue))
+                    holder.setValue(configValue);
+                else
+                    logger.warning(LOG_FORMAT.formatted("Type mismatch on config path '" + holder.getPath() + "'. Expected " + holder.getType().getSimpleName() + ", got " + (configValue != null ? configValue.getClass().getSimpleName() : "null")));
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public ConfigurationManager addConfigurationClass(Class<?> configClass) {
+        if (isConfigurationClass(configClass))
+            configClasses.add(configClass);
+        return this;
+    }
+
+    public boolean isConfigurationClass(Class<?> clazz) {
+        return clazz == null || clazz.isAnnotationPresent(Configuration.class);
+    }
 
     public ConfigurationFile register(String name) {
         return register(name, name);
