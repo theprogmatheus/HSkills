@@ -27,12 +27,19 @@ public class DatabaseSQLService extends PluginService {
      * Change how to load the database config
      */
     private HikariConfig loadDatabaseConfig() {
-        var isTest = Boolean.parseBoolean(System.getProperty("BUKKIT_PLUGIN_DB_IN_TEST_MODE", "false"));
-        if (isTest)
+        var inTestMode = Boolean.parseBoolean(System.getProperty("BUKKIT_PLUGIN_DB_IN_TEST_MODE", "false"));
+        if (inTestMode)
             return loadTestDatabaseConfig();
 
-        this.plugin.getDataFolder().mkdirs();
+        return loadLocalDatabaseConfig();
+    }
+
+
+    private HikariConfig loadLocalDatabaseConfig() {
         var storageFile = new File(this.plugin.getDataFolder(), "storage-h2");
+        var dataFolder = storageFile.getParentFile();
+        if (!dataFolder.exists())
+            dataFolder.mkdirs();
 
         var config = new HikariConfig();
         config.setJdbcUrl("jdbc:h2:%s".formatted(storageFile.toPath().toAbsolutePath()));
