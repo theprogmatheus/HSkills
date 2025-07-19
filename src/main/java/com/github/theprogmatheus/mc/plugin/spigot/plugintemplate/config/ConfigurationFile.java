@@ -36,7 +36,7 @@ public class ConfigurationFile extends YamlConfiguration {
             parent.mkdirs();
 
         var classLoader = getClass().getClassLoader();
-        var resourceName = this.resourcePath == null || this.resourcePath.isBlank() ? this.file.getName() : this.resourcePath;
+        var resourceName = getResourceName();
 
         try (var resourceStream = classLoader.getResourceAsStream(resourceName)) {
             if (resourceStream == null)
@@ -48,6 +48,15 @@ public class ConfigurationFile extends YamlConfiguration {
             log("Failed to create file: %s".formatted(this.file.getPath()), e);
         }
         return this;
+    }
+
+    public boolean existsDefaultResource() {
+        return getClass().getClassLoader().getResource(getResourceName()) != null;
+    }
+
+
+    public String getResourceName() {
+        return this.resourcePath == null || this.resourcePath.isBlank() ? this.file.getName() : this.resourcePath;
     }
 
     public ConfigurationFile load() {

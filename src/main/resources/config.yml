@@ -1,2 +1,5 @@
 # Config Template
 config-version: 1.0
+
+# Define de messages lang
+lang: "en_US"
