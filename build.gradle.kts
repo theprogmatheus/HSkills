@@ -19,7 +19,7 @@ val pluginDependencies = listOf(
     "net.gmcbm.dependencies:acf-paper:0.5.2",
     "com.j256.ormlite:ormlite-jdbc:6.1",
     "com.zaxxer:HikariCP:6.1.0",
-    "org.xerial:sqlite-jdbc:3.50.2.0",
+    "com.h2database:h2:2.3.232",
     "org.mongodb:mongodb-driver-sync:5.5.1",
     "dev.morphia.morphia:morphia-core:2.5.0"
 )// Repository: https://repo.papermc.io/
