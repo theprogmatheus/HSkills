@@ -1,5 +1,6 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
+import co.aikar.commands.BaseCommand;
 import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
@@ -19,16 +20,33 @@ public class CommandService extends AbstractService {
     private final Injector injector;
     private PaperCommandManager commandManager;
 
+    /**
+     * Register your commands here
+     */
+    private void registerAllCommands() {
+        registerCommand(TemplateCommand.class);
+    }
+
+    private void unregisterAllCommands() {
+        this.commandManager.unregisterCommands();
+    }
+
+
     @Override
     public void startup() {
         this.commandManager = new PaperCommandManager(this.plugin);
-        this.commandManager.registerCommand(this.injector.getInstance(TemplateCommand.class));
         this.commandManager.usePerIssuerLocale(false, false);
         this.commandManager.getLocales().setDefaultLocale(Locales.PORTUGUESE); // Or another language
+
+        registerAllCommands();
     }
 
     @Override
     public void shutdown() {
-        this.commandManager.unregisterCommands();
+        unregisterAllCommands();
+    }
+
+    private void registerCommand(Class<? extends BaseCommand> commandClass) {
+        this.commandManager.registerCommand(this.injector.getInstance(commandClass));
     }
 }

@@ -24,6 +24,7 @@ public class MainService extends AbstractService {
      */
     public void setupServices() {
         addService(CommandService.class);
+        addService(ListenerService.class);
         addService(DatabaseSQLService.class, 10, -10);
         // addService(DatabaseMongoService.class, 10, -10);
         addService(APIService.class);
