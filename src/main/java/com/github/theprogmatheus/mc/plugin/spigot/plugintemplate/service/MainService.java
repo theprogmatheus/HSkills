@@ -23,10 +23,10 @@ public class MainService extends PluginService {
      * Register your services here
      */
     public void setupServices() {
-        addService(ConfigurationService.class);
-        addService(MessageService.class);
-        addService(DatabaseSQLService.class, 10, -10); // or DatabaseMongoService.class
-        addService(CommandService.class);
+        addService(ConfigurationService.class, 10, 0);
+        addService(MessageService.class, 9, 0);
+        addService(DatabaseSQLService.class, 8, -8); // or DatabaseMongoService.class
+        addService(CommandService.class, 5, 0);
         addService(ListenerService.class);
         addService(APIService.class);
     }

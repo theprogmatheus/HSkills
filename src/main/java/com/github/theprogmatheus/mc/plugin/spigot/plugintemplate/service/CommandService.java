@@ -5,12 +5,15 @@ import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.command.TemplateCommand;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.env.Config;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.util.LocaleUtils;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Locale;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 @Singleton
@@ -36,9 +39,15 @@ public class CommandService extends PluginService {
     public void startup() {
         this.commandManager = new PaperCommandManager(this.plugin);
         this.commandManager.usePerIssuerLocale(false, false);
-        this.commandManager.getLocales().setDefaultLocale(Locales.PORTUGUESE); // Or another language
-
+        this.commandManager.getLocales().setDefaultLocale(getDefaultLocale());
         registerAllCommands();
+    }
+
+    private Locale getDefaultLocale() {
+        var defaultLocale = LocaleUtils.getLocaleByString(Config.LANG_DEFAULT.getValue());
+        if (defaultLocale == null)
+            defaultLocale = Locales.PORTUGUESE;
+        return defaultLocale;
     }
 
     @Override

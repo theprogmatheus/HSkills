@@ -1,6 +1,7 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lang;
 
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.ConfigurationFile;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.util.LocaleUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -55,19 +56,9 @@ public class MessageManager {
     }
 
     private Locale getPlayerLocaleByClient(Player player) {
-        try {
-            var localeString = player.getLocale();
-            var localeStringParts = localeString.split("_");
-
-            return switch (localeStringParts.length) {
-                case 1 -> new Locale(localeStringParts[0]);
-                case 2 -> new Locale(localeStringParts[0], localeStringParts[1]);
-                case 3 -> new Locale(localeStringParts[0], localeStringParts[1], localeStringParts[2]);
-                default -> getDefaultLocale();
-            };
-        } catch (Exception ignored) {
-            return getDefaultLocale();
-        }
+        logger.info("getPlayerLocaleByClient(%s) -> %s".formatted(player.getName(), player.getLocale()));
+        var locale = LocaleUtils.getLocaleByString(player.getLocale());
+        return locale == null ? getDefaultLocale() : locale;
     }
 
     public MessageFile getMessageFile(Player player) {
@@ -78,10 +69,23 @@ public class MessageManager {
 
     public MessageFile getMessageFile(Locale locale) {
         var key = normalizedTag(locale);
+
         if (key.isEmpty())
             return getDefaultMessageFile();
 
-        return this.langs.getOrDefault(key, getDefaultMessageFile());
+        var messageFile = this.langs.get(key);
+        if (messageFile != null)
+            return messageFile;
+
+        var lang = locale.getLanguage().toLowerCase();
+
+        messageFile = langs.entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith("%s_".formatted(lang)))
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+
+        return messageFile != null ? messageFile : getDefaultMessageFile();
     }
 
     public MessageFile getDefaultMessageFile() {

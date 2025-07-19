@@ -1,3 +1,5 @@
 # pt_BR language file
 
 prefix: "&6[PluginTemplate] &f"
+command:
+  template: "&aVocê executou o comando com sucesso. Plugin: {plugin}"

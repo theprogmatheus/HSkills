@@ -1,10 +1,12 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.env.Config;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lang.MessageKey;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lang.MessageManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.util.ArrayUtils;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.util.LocaleUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +16,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -31,12 +32,17 @@ public class MessageService extends PluginService {
 
     @Override
     public void startup() {
+        var langDefault = Config.LANG_DEFAULT.getValue();
+        var langIndividual = Config.LANG_INDIVIDUAL.getValue();
+        var defaultLocale = LocaleUtils.getLocaleByString(langDefault);
+
         this.messageManager = new MessageManager(
                 this.logger,
                 new File(plugin.getDataFolder(), "lang"),
                 "lang",
-                new Locale("pt", "BR")
+                defaultLocale
         );
+        this.messageManager.setIndividualLang(langIndividual);
         this.messageManager.loadLanguages();
     }
 

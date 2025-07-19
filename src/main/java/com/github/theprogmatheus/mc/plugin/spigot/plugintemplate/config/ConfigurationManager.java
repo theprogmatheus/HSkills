@@ -64,14 +64,54 @@ public class ConfigurationManager {
             field.setAccessible(true);
             if (field.get(null) instanceof ConfigurationHolder<?> holder) {
                 var configValue = config.get(holder.getPath());
-                if (holder.getType().isInstance(configValue))
-                    holder.setValue(configValue);
+                var expectedType = holder.getType();
+
+                Object coercedValue = tryCoerce(configValue, expectedType);
+
+                if (coercedValue != null)
+                    holder.setValue(coercedValue);
                 else
                     logger.warning(LOG_FORMAT.formatted("Type mismatch on config path '" + holder.getPath() + "'. Expected " + holder.getType().getSimpleName() + ", got " + (configValue != null ? configValue.getClass().getSimpleName() : "null")));
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    private Object tryCoerce(Object value, Class<?> expectedType) {
+        if (value == null)
+            return null;
+
+        if (expectedType.isInstance(value))
+            return value;
+
+
+        // Converter Number para outro Number esperado (exemplo: Integer → Double)
+        if (value instanceof Number number) {
+            if (expectedType == Double.class || expectedType == double.class) {
+                return number.doubleValue();
+            } else if (expectedType == Integer.class || expectedType == int.class) {
+                return number.intValue();
+            } else if (expectedType == Long.class || expectedType == long.class) {
+                return number.longValue();
+            } else if (expectedType == Float.class || expectedType == float.class) {
+                return number.floatValue();
+            } else if (expectedType == Short.class || expectedType == short.class) {
+                return number.shortValue();
+            } else if (expectedType == Byte.class || expectedType == byte.class) {
+                return number.byteValue();
+            }
+        }
+
+        if (expectedType == String.class)
+            return String.valueOf(value);
+
+
+        if ((expectedType == Boolean.class || expectedType == boolean.class) && value instanceof String s)
+            return Boolean.parseBoolean(s);
+
+        return null;
     }
 
 
