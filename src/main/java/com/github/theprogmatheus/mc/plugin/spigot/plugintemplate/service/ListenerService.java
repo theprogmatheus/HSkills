@@ -1,7 +1,7 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.listener.TemplateListener;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ListenerService extends AbstractService {
+public class ListenerService extends PluginService {
 
 
     private final PluginTemplate plugin;

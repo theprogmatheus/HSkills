@@ -3,7 +3,7 @@ package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.api.APIProvider;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.api.impl.APIProviderImpl;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 
 @Singleton
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class APIService extends AbstractService {
+public class APIService extends PluginService {
 
 
     private final PluginTemplate plugin;

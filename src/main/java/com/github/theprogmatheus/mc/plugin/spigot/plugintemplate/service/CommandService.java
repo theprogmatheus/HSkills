@@ -5,7 +5,7 @@ import co.aikar.commands.Locales;
 import co.aikar.commands.PaperCommandManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.command.TemplateCommand;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 @Singleton
-public class CommandService extends AbstractService {
+public class CommandService extends PluginService {
 
     private final PluginTemplate plugin;
     private final Injector injector;

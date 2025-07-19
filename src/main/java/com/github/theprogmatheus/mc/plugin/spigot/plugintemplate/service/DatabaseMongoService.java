@@ -1,6 +1,6 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.database.mongo.DatabaseMongoManager;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 @Singleton
-public class DatabaseMongoService extends AbstractService {
+public class DatabaseMongoService extends PluginService {
 
     private final Injector injector;
     private DatabaseMongoManager databaseManager;

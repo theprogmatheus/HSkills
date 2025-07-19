@@ -1,6 +1,6 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.core.AbstractService;
+import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import lombok.RequiredArgsConstructor;
 
@@ -13,10 +13,10 @@ import java.util.function.ToIntFunction;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 @Singleton
-public class MainService extends AbstractService {
+public class MainService extends PluginService {
 
     private final Injector injector;
-    private final List<AbstractService> services = new ArrayList<>();
+    private final List<PluginService> services = new ArrayList<>();
 
 
     /**
@@ -44,28 +44,28 @@ public class MainService extends AbstractService {
     }
 
     private void startupServices() {
-        orderedServices(AbstractService::getStartupPriority)
-                .forEach(AbstractService::startup);
+        orderedServices(PluginService::getStartupPriority)
+                .forEach(PluginService::startup);
     }
 
     private void shutdownServices() {
-        orderedServices(AbstractService::getShutdownPriority)
-                .forEach(AbstractService::shutdown);
+        orderedServices(PluginService::getShutdownPriority)
+                .forEach(PluginService::shutdown);
     }
 
 
-    private List<AbstractService> orderedServices(ToIntFunction<? super AbstractService> keyExtractor) {
+    private List<PluginService> orderedServices(ToIntFunction<? super PluginService> keyExtractor) {
         var services = new ArrayList<>(this.services);
         services.sort(Comparator.comparingInt(keyExtractor)
                 .reversed());
         return services;
     }
 
-    private void addService(Class<? extends AbstractService> serviceClass) {
+    private void addService(Class<? extends PluginService> serviceClass) {
         addService(serviceClass, 1, 1);
     }
 
-    private void addService(Class<? extends AbstractService> serviceClass, int startupPriority, int shutdownPriority) {
+    private void addService(Class<? extends PluginService> serviceClass, int startupPriority, int shutdownPriority) {
         var service = this.injector.getInstance(serviceClass);
 
         service.setStartupPriority(startupPriority);
