@@ -8,10 +8,11 @@ import org.bukkit.inventory.InventoryHolder;
 @Data
 public class Menu implements InventoryHolder {
 
+    private final MenuConfig config;
     private Inventory inventory;
-    private ClickExecutor airClickExecutor;
 
-    Menu() {
+    Menu(MenuConfig config) {
+        this.config = config;
     }
 
 
