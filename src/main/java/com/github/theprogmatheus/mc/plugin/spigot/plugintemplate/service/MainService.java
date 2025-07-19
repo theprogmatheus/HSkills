@@ -24,6 +24,7 @@ public class MainService extends PluginService {
      */
     public void setupServices() {
         addService(ConfigurationService.class);
+        addService(MessageService.class);
         addService(DatabaseSQLService.class, 10, -10); // or DatabaseMongoService.class
         addService(CommandService.class);
         addService(ListenerService.class);

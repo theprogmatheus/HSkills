@@ -24,24 +24,21 @@ public class MessageManager {
     private final File folder;
     private final String resourcePath;
     private final Locale defaultLocale;
-    private final Map<Locale, MessageFile> langs = new ConcurrentHashMap<>();
+    private final Map<String, MessageFile> langs = new ConcurrentHashMap<>();
     private boolean individualLang = true;
 
     public void loadLanguages() {
         for (var locale : Locale.getAvailableLocales()) {
-            var lang = locale.toString();
-
+            var lang = normalizedTag(locale);
             try {
                 var file = new File(folder, "%s.yml".formatted(lang));
                 var messageFile = new MessageFile(logger, file, "%s/%s.yml".formatted(resourcePath, lang));
-
                 if (!messageFile.existsDefaultResource())
                     continue;
 
-                messageFile.createIfNotExistsAndLoad();
+                langs.put(lang, (MessageFile) messageFile.createIfNotExistsAndLoad());
 
-                langs.put(locale, messageFile);
-                log("Message lang loaded successfully: %s from %s".formatted(lang, messageFile.getResourceName()));
+                log("Message lang loaded successfully: %s (%s) from %s".formatted(lang, locale.getDisplayLanguage(Locale.ENGLISH), messageFile.getResourceName()));
             } catch (Exception e) {
                 log("Failed to load message lang: %s. Cause: %s".formatted(lang, e.getMessage()));
             }
@@ -80,22 +77,30 @@ public class MessageManager {
     }
 
     public MessageFile getMessageFile(Locale locale) {
-        var messageFile = langs.get(locale);
-        return messageFile == null ? getDefaultMessageFile() : messageFile;
+        var key = normalizedTag(locale);
+        if (key.isEmpty())
+            return getDefaultMessageFile();
+
+        return this.langs.getOrDefault(key, getDefaultMessageFile());
     }
 
     public MessageFile getDefaultMessageFile() {
-        return this.langs.get(this.defaultLocale);
+        return this.langs.get(normalizedTag(this.defaultLocale));
     }
 
     public void reload(Locale locale) {
-        var config = langs.get(locale);
+        var config = langs.get(normalizedTag(locale));
         if (config != null)
             config.load();
     }
 
     public void reloadAll() {
         langs.values().forEach(ConfigurationFile::load);
+    }
+
+    private String normalizedTag(Locale locale) {
+        if (locale == null) return "";
+        return locale.toString().toLowerCase();
     }
 
     private void log(String message) {

@@ -9,8 +9,10 @@ public abstract class PluginService {
     private int startupPriority;
     private int shutdownPriority;
 
-    public abstract void startup();
+    public void startup() {
+    }
 
-    public abstract void shutdown();
+    public void shutdown() {
+    }
 
 }

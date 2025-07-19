@@ -32,11 +32,6 @@ public class ConfigurationService extends PluginService {
         registerAllConfigs();
     }
 
-    @Override
-    public void shutdown() {
-
-    }
-
     private void registerConfig(String configPath) {
         this.configurationManager.register(configPath);
     }
