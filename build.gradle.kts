@@ -21,7 +21,9 @@ val pluginDependencies = listOf(
     "com.zaxxer:HikariCP:6.1.0",
     "com.h2database:h2:2.3.232",
     "org.mongodb:mongodb-driver-sync:5.5.1",
-    "dev.morphia.morphia:morphia-core:2.5.0"
+    "dev.morphia.morphia:morphia-core:2.5.0",
+    "org.msgpack:msgpack-core:0.9.10",
+    "org.msgpack:jackson-dataformat-msgpack:0.9.10"
 )// Repository: https://repo.papermc.io/
 val supportsLibraries = true
 
@@ -37,7 +39,6 @@ repositories {
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT")
     compileOnly("org.projectlombok:lombok:1.18.38")
-
     annotationProcessor("org.projectlombok:lombok:1.18.38")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -70,8 +71,8 @@ tasks {
                 "website" to pluginWebsite,
                 "description" to pluginDescription,
                 "libraries" to if ((!supportsLibraries) || pluginDependencies.isEmpty()) "[]" else pluginDependencies.joinToString(
-                    separator = "\n - ",
-                    prefix = "\n - "
+                    separator = "\n    - ",
+                    prefix = "\n    - "
                 ),
             )
 
