@@ -50,6 +50,7 @@ dependencies {
     else
         pluginDependencies.forEach { dependency ->
             compileOnly(dependency)
+            runtimeOnly(dependency)
             testImplementation(dependency)
         }
 }

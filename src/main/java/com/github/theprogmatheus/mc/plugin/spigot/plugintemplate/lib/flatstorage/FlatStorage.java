@@ -64,16 +64,20 @@ public class FlatStorage<O> implements Closeable {
         this.storage.executeBatchRead(runnable);
     }
 
-    private StorageData toStorageData(O object) {
+    protected StorageData toStorageData(O object) {
         try {
+            if (object == null)
+                return null;
             return new StorageData(0, true, this.objectMapper.writeValueAsBytes(object));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private O fromStorageData(StorageData data) {
+    protected O fromStorageData(StorageData data) {
         try {
+            if (data == null)
+                return null;
             return this.objectMapper.readValue(data.getPayload(), this.typeClass);
         } catch (IOException e) {
             throw new RuntimeException(e);

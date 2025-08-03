@@ -43,7 +43,7 @@ class Storage {
 
     private void _put(long id, StorageData value) {
         try {
-            Long offset = this.index.map.get(id);
+            Long offset = this.index.getOffsetById(id);
             if (offset != null)
                 markAsRemoved(offset);
 
@@ -51,7 +51,7 @@ class Storage {
 
             this.randomAccessFile.seek(offset);
             value.write(this.randomAccessFile);
-            this.index.map.put(id, offset);
+            this.index.add(id, offset);
 
             value.setOffset(offset);
         } catch (IOException e) {
@@ -67,7 +67,7 @@ class Storage {
 
     private StorageData _get(long id) {
         try {
-            Long offset = this.index.map.get(id);
+            Long offset = this.index.getOffsetById(id);
             if (offset == null)
                 return null;
 
@@ -84,11 +84,13 @@ class Storage {
     }
 
     public List<StorageData> getAll() {
-        return this.executeBatchRead(this::_getAll);
+        if (this.randomAccessFile == null)
+            return this.executeBatchRead(this::_getAll);
+        else return _getAll();
     }
 
     private List<StorageData> _getAll() {
-        return this.index.getMap().entrySet().stream()
+        return this.index.getIdOffsetMap().entrySet().stream()
                 .map(entry -> {
                     try {
                         this.randomAccessFile.seek(entry.getValue());
@@ -112,13 +114,12 @@ class Storage {
 
     private boolean _remove(long id) {
         try {
-            Long offset = this.index.map.get(id);
+            Long offset = this.index.getOffsetById(id);
             if (offset == null)
                 return false;
 
             markAsRemoved(offset);
-
-            this.index.map.remove(id);
+            this.index.removeId(id);
             return true;
         } catch (IOException e) {
             throw new RuntimeException("Unable to remove %s.".formatted(id), e);
@@ -132,7 +133,7 @@ class Storage {
     }
 
     private boolean _contains(long id) {
-        return this.index.map.containsKey(id);
+        return this.index.getIdOffsetMap().containsKey(id);
     }
 
     private void markAsRemoved(long offset) throws IOException {
@@ -143,7 +144,7 @@ class Storage {
     public void saveIndex() {
         executeBatchWrite(() -> {
             try {
-                if (this.index == null || this.index.map.isEmpty())
+                if (this.index == null || this.index.isEmpty())
                     return;
 
                 long oldOffset = this.index.getOffset();
@@ -156,7 +157,7 @@ class Storage {
                 this.randomAccessFile.seek(offset);
                 this.index.write(this.randomAccessFile);
 
-                this.header.setIndexInfo(new StorageHeader.StorageIndexInfo(offset, this.index.map.size()));
+                this.header.setIndexInfo(new StorageHeader.StorageIndexInfo(offset, this.index.count()));
                 this.randomAccessFile.seek(0);
                 this.header.write(this.randomAccessFile);
 
@@ -171,7 +172,7 @@ class Storage {
         try {
             Storage storage = new Storage(new File("%s.temp".formatted(this.file.getAbsolutePath())));
             storage.executeBatchWrite(() -> {
-                for (var entry : this.index.map.entrySet()) {
+                for (var entry : this.index.getIdOffsetMap().entrySet()) {
                     try {
                         Long id = entry.getKey();
                         Long offset = entry.getValue();
@@ -322,7 +323,7 @@ class Storage {
             this.header = storageHeader;
 
             StorageHeader.StorageIndexInfo indexInfo = this.header.getIndexInfo();
-            StorageIndex storageIndex = new StorageIndex(new HashMap<>());
+            StorageIndex storageIndex = new StorageIndex(new HashMap<>(), new HashMap<>());
             if (indexInfo.getCount() > 0) {
                 randomAccessFile.seek(indexInfo.getOffset());
                 storageIndex.read(randomAccessFile);
