@@ -1,4 +1,4 @@
-package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.flatstorage.schema;
+package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.flatstorage;
 
 import lombok.Data;
 

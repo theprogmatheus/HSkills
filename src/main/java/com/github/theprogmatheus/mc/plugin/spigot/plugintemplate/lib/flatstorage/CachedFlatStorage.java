@@ -102,7 +102,7 @@ public class CachedFlatStorage<O> extends FlatStorage<O> {
                     storage.put(id, toStorageData(value));
             }
         });
-        storage.saveIndex();
+        storage.persistMetadata();
     }
 
 

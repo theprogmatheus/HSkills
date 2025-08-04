@@ -1,10 +1,9 @@
-package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.flatstorage.schema;
+package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.flatstorage;
 
 import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,7 +12,7 @@ import java.util.UUID;
 import java.util.zip.CRC32C;
 
 @Getter
-public abstract class Schema<T> {
+public class Schema<T> {
 
     private static final CRC32C CRC32C = new CRC32C();
 
@@ -28,11 +27,6 @@ public abstract class Schema<T> {
         this.schemaVersion = generateSchemaVersion();
         this.recordSize = calculateRecordSize();
     }
-
-    public abstract ByteBuffer serialize(T object) throws Exception;
-
-    public abstract T deserialize(ByteBuffer byteBuffer) throws Exception;
-
 
     private List<FieldSchema> mapFields() {
         List<FieldSchema> fieldSchemas = new ArrayList<>();

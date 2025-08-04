@@ -16,11 +16,13 @@ public class FlatStorage<O> implements Closeable {
 
     private final Storage storage;
     private final Class<O> typeClass;
+    private final Schema<O> schema;
     private final ObjectMapper objectMapper;
 
     public FlatStorage(File file, Class<O> typeClass) {
-        this.storage = new Storage(file);
         this.typeClass = typeClass;
+        this.schema = new Schema<>(this.typeClass);
+        this.storage = new Storage(file, this.schema);
         this.objectMapper = new ObjectMapper(new MessagePackFactory());
     }
 
@@ -87,7 +89,7 @@ public class FlatStorage<O> implements Closeable {
 
     @Override
     public void close() throws IOException {
-        this.storage.saveIndex();
+        this.storage.persistMetadata();
         this.storage.compact();
     }
 }

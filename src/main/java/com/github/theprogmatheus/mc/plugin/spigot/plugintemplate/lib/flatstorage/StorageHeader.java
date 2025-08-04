@@ -19,6 +19,7 @@ public class StorageHeader implements StorageIO {
     private int schemaVersion;
     private long creationTimestamp;
     private StorageIndexInfo indexInfo;
+    private long schemasOffset;
 
     @Override
     public void read(DataInput input) throws IOException {
@@ -26,6 +27,7 @@ public class StorageHeader implements StorageIO {
         this.schemaVersion = input.readInt();
         this.creationTimestamp = input.readLong();
         this.indexInfo = new StorageIndexInfo(input.readLong(), input.readInt());
+        this.schemasOffset = input.readLong();
     }
 
     @Override
@@ -38,6 +40,7 @@ public class StorageHeader implements StorageIO {
             dataOutputStream.writeLong(this.creationTimestamp);
             dataOutputStream.writeLong(this.indexInfo.getOffset());
             dataOutputStream.writeInt(this.indexInfo.getCount());
+            dataOutputStream.writeLong(this.schemasOffset);
 
             byte[] headerBytes = byteArrayOutputStream.toByteArray();
 

@@ -16,20 +16,42 @@ import java.util.stream.Collectors;
 
 
 @Getter
-class Storage {
+public class Storage {
 
     private final File file;
     private final ReentrantReadWriteLock lock;
+    private final Schema<?> schema;
     private RandomAccessFile randomAccessFile;
     private StorageHeader header;
     private StorageIndex index;
+    private StorageSchemaSnapshots schemas;
     private boolean loaded;
 
-    public Storage(File file) {
+    public Storage(File file, Schema<?> schema) {
         this.file = file;
         this.lock = new ReentrantReadWriteLock();
+        this.schema = schema;
+        this._init();
     }
 
+    private void _init() {
+        if (this.loaded)
+            return;
+
+        try {
+            if (this.checkFile()) {
+                if (this.load()) {
+
+                    // registra o schema se não houver.
+                    if (!this.schemas.hasSnapshot(this.schema.getSchemaVersion()))
+                        this.schemas.register(this.schema);
+
+                } else throw new RuntimeException("Could not load db file.");
+            } else throw new RuntimeException("Could not check db file.");
+        } catch (Exception exception) {
+            throw new RuntimeException("Unable to init the storage db.", exception);
+        }
+    }
 
     public void put(long id, StorageData value) {
         Objects.requireNonNull(value, "The value can't be null.");
@@ -141,12 +163,11 @@ class Storage {
         this.randomAccessFile.writeBoolean(false);
     }
 
-    public void saveIndex() {
-        executeBatchWrite(() -> {
-            try {
-                if (this.index == null || this.index.isEmpty())
-                    return;
 
+    private void _persistMetadata() {
+        try {
+            // salva o index.
+            if (this.index != null && !this.index.isEmpty()) {
                 long oldOffset = this.index.getOffset();
 
                 if (oldOffset > 0)
@@ -158,19 +179,39 @@ class Storage {
                 this.index.write(this.randomAccessFile);
 
                 this.header.setIndexInfo(new StorageHeader.StorageIndexInfo(offset, this.index.count()));
-                this.randomAccessFile.seek(0);
-                this.header.write(this.randomAccessFile);
-
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to persist index.", e);
             }
-        });
+
+            // salva os schemas
+            if (this.schemas != null) {
+                long oldOffset = this.schemas.getOffset();
+                if (oldOffset > 0)
+                    markAsRemoved(oldOffset);
+
+                long offset = this.randomAccessFile.length();
+                this.schemas.setOffset(offset);
+                this.randomAccessFile.seek(offset);
+                this.schemas.write(this.randomAccessFile);
+
+                this.header.setSchemasOffset(offset);
+            }
+
+            this.randomAccessFile.seek(0);
+            this.header.write(this.randomAccessFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to persist index.", e);
+        }
+    }
+
+    public void persistMetadata() {
+        if (this.randomAccessFile == null)
+            executeBatchWrite(this::_persistMetadata);
+        else _persistMetadata();
     }
 
     public void compact() {
         lock.writeLock().lock();
         try {
-            Storage storage = new Storage(new File("%s.temp".formatted(this.file.getAbsolutePath())));
+            Storage storage = new Storage(new File("%s.temp".formatted(this.file.getAbsolutePath())), this.schema);
             storage.executeBatchWrite(() -> {
                 for (var entry : this.index.getIdOffsetMap().entrySet()) {
                     try {
@@ -191,7 +232,7 @@ class Storage {
                     }
                 }
             });
-            storage.saveIndex();
+            storage.persistMetadata();
 
             // 3. Após a compactação e o fechamento de AMBOS os arquivos, podemos substituí-los.
             File backupFile = new File("%s.back".formatted(this.file.getAbsolutePath()));
@@ -201,7 +242,7 @@ class Storage {
                 Files.move(storage.file.toPath(), this.file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 Files.deleteIfExists(backupFile.toPath());
                 this.loaded = false;
-                this.prepare();
+                this._init();
             } catch (IOException exception) {
                 Files.move(backupFile.toPath(), this.file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 throw new RuntimeException("Error trying to replace the current file with the compressed file.", exception);
@@ -224,8 +265,6 @@ class Storage {
 
 
     public <T> T executeBatchWrite(Supplier<T> supplier) {
-        if (!this.prepare())
-            throw new RuntimeException("Unable to prepare to run");
 
         lock.writeLock().lock();
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(this.file, "rw")) {
@@ -247,9 +286,6 @@ class Storage {
     }
 
     public <T> T executeBatchRead(Supplier<T> supplier) {
-        if (!this.prepare())
-            throw new RuntimeException("Unable to prepare to run");
-
         lock.readLock().lock();
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(this.file, "r")) {
             this.randomAccessFile = randomAccessFile;
@@ -259,21 +295,6 @@ class Storage {
         } finally {
             this.randomAccessFile = null;
             lock.readLock().unlock();
-        }
-    }
-
-
-    private boolean prepare() {
-        try {
-            if (this.loaded)
-                return true;
-
-            if (!checkFile())
-                return false;
-            return load();
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return false;
         }
     }
 
@@ -306,8 +327,10 @@ class Storage {
                     StorageHeader.HEADER_VERSION,
                     StorageHeader.HEADER_SCHEMA_VERSION,
                     System.currentTimeMillis(),
-                    new StorageHeader.StorageIndexInfo(StorageHeader.HEADER_RESERVED_LENGTH, 0)
+                    new StorageHeader.StorageIndexInfo(StorageHeader.HEADER_RESERVED_LENGTH, 0),
+                    -1L
             ).write(randomAccessFile);
+
         } finally {
             this.lock.writeLock().unlock();
         }
@@ -329,6 +352,15 @@ class Storage {
                 storageIndex.read(randomAccessFile);
             }
             this.index = storageIndex;
+
+            StorageSchemaSnapshots schemaSnapshots = new StorageSchemaSnapshots();
+
+            long schemasOffset = this.header.getSchemasOffset();
+            if (schemasOffset > 0) {
+                randomAccessFile.seek(this.header.getSchemasOffset());
+                schemaSnapshots.read(randomAccessFile);
+            }
+            this.schemas = schemaSnapshots;
 
             return this.loaded = true;
         } finally {
