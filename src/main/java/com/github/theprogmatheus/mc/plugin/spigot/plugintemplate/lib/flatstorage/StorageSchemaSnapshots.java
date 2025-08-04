@@ -31,10 +31,10 @@ public class StorageSchemaSnapshots extends StorageData {
                 dataOutputStream.writeLong(snapshot.getSchemaVersion()); // salva a versão do schema
                 dataOutputStream.writeInt(snapshot.getRecordSize()); // salva o record size
 
-                Map<String, SchemaFieldSnapshot> fields = snapshot.getFields();
+                Map<String, SchemaSnapshotField> fields = snapshot.getFields();
 
                 dataOutputStream.writeInt(fields.size()); // salva o tamanho do mapa dos fields
-                for (SchemaFieldSnapshot field : fields.values()) {
+                for (SchemaSnapshotField field : fields.values()) {
                     dataOutputStream.writeUTF(field.getClassType()); // salva o tipo do field (acho que nem precisa, considerando o controle de versão)
                     dataOutputStream.writeUTF(field.getName()); // salva o nome do campo
                     dataOutputStream.writeInt(field.getRecordSize()); // salva o tamanho do registro (necessário aqui?, vou manter)
@@ -73,7 +73,7 @@ public class StorageSchemaSnapshots extends StorageData {
                     int fieldRecordSize = dataInputStream.readInt();
                     long offset = dataInputStream.readLong();
 
-                    SchemaFieldSnapshot field = new SchemaFieldSnapshot(classType, name, fieldRecordSize, offset);
+                    SchemaSnapshotField field = new SchemaSnapshotField(classType, name, fieldRecordSize, offset);
 
                     snapshot.getFields().put(name, field);
                 }
@@ -92,26 +92,26 @@ public class StorageSchemaSnapshots extends StorageData {
         return this.snapshots.get(schemaVersion);
     }
 
-    public SchemaSnapshot register(Schema<?> schema) {
+    public SchemaSnapshot register(StorageSchema<?> schema) {
         SchemaSnapshot snapshot = createSnapshot(schema);
         this.snapshots.put(snapshot.getSchemaVersion(), snapshot);
         return snapshot;
     }
 
-    private SchemaSnapshot createSnapshot(Schema<?> schema) {
+    private SchemaSnapshot createSnapshot(StorageSchema<?> schema) {
         SchemaSnapshot snapshot = new SchemaSnapshot();
 
         snapshot.setClassName(schema.getTypeClass().getName());
         snapshot.setSchemaVersion(schema.getSchemaVersion());
         snapshot.setRecordSize(schema.getRecordSize());
 
-        Map<String, SchemaFieldSnapshot> fieldSnapshots = new HashMap<>();
-        List<FieldSchema> fields = schema.getFields();
-        fields.sort(Comparator.comparing(FieldSchema::getName));
+        Map<String, SchemaSnapshotField> fieldSnapshots = new HashMap<>();
+        List<StorageSchemaField> fields = schema.getFields();
+        fields.sort(Comparator.comparing(StorageSchemaField::getName));
 
         int offset = 0;
-        for (FieldSchema field : fields) {
-            SchemaFieldSnapshot fieldSnapshot = new SchemaFieldSnapshot();
+        for (StorageSchemaField field : fields) {
+            SchemaSnapshotField fieldSnapshot = new SchemaSnapshotField();
             fieldSnapshot.setName(field.getName());
             fieldSnapshot.setRecordSize(field.getRecordSize());
             fieldSnapshot.setClassType(field.getType().getName());

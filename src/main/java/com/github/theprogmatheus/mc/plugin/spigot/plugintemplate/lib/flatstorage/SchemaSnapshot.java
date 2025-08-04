@@ -14,5 +14,5 @@ public class SchemaSnapshot {
     private long schemaVersion;
     private String className;
     private int recordSize;
-    private Map<String, SchemaFieldSnapshot> fields;
+    private Map<String, SchemaSnapshotField> fields;
 }

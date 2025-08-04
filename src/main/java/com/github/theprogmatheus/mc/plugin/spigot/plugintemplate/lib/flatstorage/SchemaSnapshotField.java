@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SchemaFieldSnapshot {
+public class SchemaSnapshotField {
 
     private String classType;
     private String name;

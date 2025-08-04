@@ -3,7 +3,7 @@ package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.flatstorag
 import lombok.Data;
 
 @Data
-public class FieldSchema {
+public class StorageSchemaField {
 
     private final String name;
     private final Class<?> type;

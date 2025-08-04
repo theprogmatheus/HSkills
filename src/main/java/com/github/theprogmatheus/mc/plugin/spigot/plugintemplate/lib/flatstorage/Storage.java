@@ -20,14 +20,14 @@ public class Storage {
 
     private final File file;
     private final ReentrantReadWriteLock lock;
-    private final Schema<?> schema;
+    private final StorageSchema<?> schema;
     private RandomAccessFile randomAccessFile;
     private StorageHeader header;
     private StorageIndex index;
-    private StorageSchemaSnapshots schemas;
+    private StorageSchemaSnapshots schemaSnapshots;
     private boolean loaded;
 
-    public Storage(File file, Schema<?> schema) {
+    public Storage(File file, StorageSchema<?> schema) {
         this.file = file;
         this.lock = new ReentrantReadWriteLock();
         this.schema = schema;
@@ -43,8 +43,8 @@ public class Storage {
                 if (this.load()) {
 
                     // registra o schema se não houver.
-                    if (!this.schemas.hasSnapshot(this.schema.getSchemaVersion()))
-                        this.schemas.register(this.schema);
+                    if (!this.schemaSnapshots.hasSnapshot(this.schema.getSchemaVersion()))
+                        this.schemaSnapshots.register(this.schema);
 
                 } else throw new RuntimeException("Could not load db file.");
             } else throw new RuntimeException("Could not check db file.");
@@ -182,15 +182,15 @@ public class Storage {
             }
 
             // salva os schemas
-            if (this.schemas != null) {
-                long oldOffset = this.schemas.getOffset();
+            if (this.schemaSnapshots != null) {
+                long oldOffset = this.schemaSnapshots.getOffset();
                 if (oldOffset > 0)
                     markAsRemoved(oldOffset);
 
                 long offset = this.randomAccessFile.length();
-                this.schemas.setOffset(offset);
+                this.schemaSnapshots.setOffset(offset);
                 this.randomAccessFile.seek(offset);
-                this.schemas.write(this.randomAccessFile);
+                this.schemaSnapshots.write(this.randomAccessFile);
 
                 this.header.setSchemasOffset(offset);
             }
@@ -360,7 +360,7 @@ public class Storage {
                 randomAccessFile.seek(this.header.getSchemasOffset());
                 schemaSnapshots.read(randomAccessFile);
             }
-            this.schemas = schemaSnapshots;
+            this.schemaSnapshots = schemaSnapshots;
 
             return this.loaded = true;
         } finally {

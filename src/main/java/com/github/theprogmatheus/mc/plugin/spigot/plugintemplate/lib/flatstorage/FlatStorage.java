@@ -16,12 +16,12 @@ public class FlatStorage<O> implements Closeable {
 
     private final Storage storage;
     private final Class<O> typeClass;
-    private final Schema<O> schema;
+    private final StorageSchema<O> schema;
     private final ObjectMapper objectMapper;
 
     public FlatStorage(File file, Class<O> typeClass) {
         this.typeClass = typeClass;
-        this.schema = new Schema<>(this.typeClass);
+        this.schema = new StorageSchema<>(this.typeClass);
         this.storage = new Storage(file, this.schema);
         this.objectMapper = new ObjectMapper(new MessagePackFactory());
     }

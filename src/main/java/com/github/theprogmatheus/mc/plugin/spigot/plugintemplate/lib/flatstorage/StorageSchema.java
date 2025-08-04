@@ -12,24 +12,24 @@ import java.util.UUID;
 import java.util.zip.CRC32C;
 
 @Getter
-public class Schema<T> {
+public class StorageSchema<T> {
 
     private static final CRC32C CRC32C = new CRC32C();
 
     private final Class<T> typeClass;
-    private final List<FieldSchema> fields;
+    private final List<StorageSchemaField> fields;
     private final long schemaVersion;
     private final int recordSize;
 
-    public Schema(Class<T> typeClass) {
+    public StorageSchema(Class<T> typeClass) {
         this.typeClass = typeClass;
         this.fields = mapFields();
         this.schemaVersion = generateSchemaVersion();
         this.recordSize = calculateRecordSize();
     }
 
-    private List<FieldSchema> mapFields() {
-        List<FieldSchema> fieldSchemas = new ArrayList<>();
+    private List<StorageSchemaField> mapFields() {
+        List<StorageSchemaField> fieldSchemas = new ArrayList<>();
         Field[] fields = this.typeClass.getDeclaredFields();
         for (Field field : fields) {
             int mod = field.getModifiers();
@@ -41,9 +41,9 @@ public class Schema<T> {
             Class<?> type = field.getType();
             int recordSize = getRecordSizeByFieldType(type);
             boolean pointer = recordSize == -1;
-            fieldSchemas.add(new FieldSchema(name, type, pointer ? 8 : recordSize, pointer));
+            fieldSchemas.add(new StorageSchemaField(name, type, pointer ? 8 : recordSize, pointer));
         }
-        fieldSchemas.sort(Comparator.comparing(FieldSchema::getName)); // para manter consistência
+        fieldSchemas.sort(Comparator.comparing(StorageSchemaField::getName)); // para manter consistência
         return fieldSchemas;
     }
 
@@ -72,7 +72,7 @@ public class Schema<T> {
     private long generateSchemaVersion() {
         CRC32C.reset();
         StringBuilder stringBuilder = new StringBuilder();
-        for (FieldSchema field : this.fields) {
+        for (StorageSchemaField field : this.fields) {
             stringBuilder.append(field.getName());
             stringBuilder.append(field.getType().getName());
         }
@@ -83,7 +83,7 @@ public class Schema<T> {
 
     private int calculateRecordSize() {
         int size = this.fields.stream()
-                .map(FieldSchema::getRecordSize)
+                .map(StorageSchemaField::getRecordSize)
                 .reduce(0, Integer::sum);
 
         size += 8; // reservado para a versão do schema
