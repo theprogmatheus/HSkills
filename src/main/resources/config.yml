@@ -1,9 +1,30 @@
 # Config Template
 config-version: 1.0
 
-# Define de messages lang
+# =====================[ Lang settings ]===================== #
 lang:
   # Define the default lang
   default: "en_us"
   #Define if you want to use individual lang per player settings
   individual: true
+
+# =====================[ Database settings ]===================== #
+database:
+
+  # Defines the type of database to be used. (SQLite, MySQL, or MariaDB)
+  type: "SQLite"
+
+  # Defines the prefix used in the names of tables in the database.
+  prefix: "plugintemplate_"
+
+  # Sets the database address. (SQLite doesn't need this.)
+  host: "localhost"
+
+  # Sets the database name. (SQLite doesn't need this.)
+  dbname: "minecraft"
+
+  # Sets the database username. (SQLite doesn't need this.)
+  user: "yourUsername"
+
+  # Sets the database password. (SQLite doesn't need this.)
+  pass: "yourPassword"

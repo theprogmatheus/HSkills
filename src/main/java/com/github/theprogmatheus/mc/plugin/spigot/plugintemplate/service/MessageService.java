@@ -1,6 +1,5 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.config.env.Config;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lang.MessageKey;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lang.MessageManager;
@@ -11,21 +10,19 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-@Singleton
-@RequiredArgsConstructor(onConstructor_ = @Inject)
+@RequiredArgsConstructor
 @Getter
 public class MessageService extends PluginService {
 
 
-    private final PluginTemplate plugin;
+    private final Plugin plugin;
     private final Logger logger;
     private MessageManager messageManager;
 

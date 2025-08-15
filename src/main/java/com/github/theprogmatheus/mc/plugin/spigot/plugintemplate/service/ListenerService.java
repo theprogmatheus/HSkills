@@ -1,51 +1,13 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.PluginTemplate;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.listener.lang.PlayerJoinLangConfig;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
-@RequiredArgsConstructor(onConstructor_ = @Inject)
+@RequiredArgsConstructor
 public class ListenerService extends PluginService {
 
 
-    private final PluginTemplate plugin;
-    private final Injector injector;
-    private PluginManager pluginManager;
+    private final Plugin plugin;
 
-    /**
-     * Register your listeners here
-     */
-    private void registerAllListeners() {
-        registerListener(PlayerJoinLangConfig.class);
-    }
-
-    private void unregisterAllListeners() {
-        HandlerList.unregisterAll(this.plugin);
-    }
-
-
-    @Override
-    public void startup() {
-        this.pluginManager = Bukkit.getPluginManager();
-        registerAllListeners();
-    }
-
-    @Override
-    public void shutdown() {
-        unregisterAllListeners();
-    }
-
-    private void registerListener(Class<? extends Listener> listenerClass) {
-        this.pluginManager.registerEvents(this.injector.getInstance(listenerClass), this.plugin);
-    }
 }

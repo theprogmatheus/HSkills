@@ -5,7 +5,5 @@ api-version: ${apiVersion}
 authors:
   - ${authors}
 website: ${website}
-depend: [ "CraftLib" ]
 description: ${description}
-craftlib:
-  libraries: ${libraries}
+libraries: ${libraries}

@@ -14,18 +14,7 @@ val pluginAuthors = listOf("Sr_Edition", "TheProgMatheus")
 val apiVersion = "1.20"
 val pluginWebsite = "https://github.com/theprogmatheus/PluginTemplate"
 val pluginDescription = "Um template base para desenvolvimento de plugins"
-val pluginDependencies = listOf(
-    "javax.inject:javax.inject:1",
-    "net.gmcbm.dependencies:acf-paper:0.5.2",
-    "com.j256.ormlite:ormlite-jdbc:6.1",
-    "com.zaxxer:HikariCP:6.1.0",
-    "com.h2database:h2:2.3.232",
-    "org.mongodb:mongodb-driver-sync:5.5.1",
-    "dev.morphia.morphia:morphia-core:2.5.0",
-    "org.msgpack:msgpack-core:0.9.10",
-    "org.msgpack:jackson-dataformat-msgpack:0.9.10"
-)// Repository: https://repo.papermc.io/
-val supportsLibraries = true
+val pluginLibraries = listOf<String>() // Repository: https://repo.papermc.io/
 
 repositories {
     mavenCentral()
@@ -41,18 +30,22 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.20:3.9.0")
+    implementation("com.zaxxer:HikariCP:7.0.1") {
+        isTransitive = false
+    }
 
-    if (!(supportsLibraries))
-        pluginDependencies.forEach(this::implementation)
-    else
-        pluginDependencies.forEach { dependency ->
+    if (pluginLibraries.isNotEmpty()) {
+        pluginLibraries.forEach { dependency ->
             compileOnly(dependency)
             runtimeOnly(dependency)
             testImplementation(dependency)
         }
+    }
+
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.20:3.9.0")
+    testImplementation("org.xerial:sqlite-jdbc:3.50.3.0")
 }
 
 java {
@@ -71,9 +64,9 @@ tasks {
                 "authors" to pluginAuthors.joinToString("\n  - "),
                 "website" to pluginWebsite,
                 "description" to pluginDescription,
-                "libraries" to if ((!supportsLibraries) || pluginDependencies.isEmpty()) "[]" else pluginDependencies.joinToString(
-                    separator = "\n    - ",
-                    prefix = "\n    - "
+                "libraries" to if (pluginLibraries.isEmpty()) "[]" else pluginLibraries.joinToString(
+                    separator = "\n  - ",
+                    prefix = "\n  - "
                 ),
             )
 
@@ -83,6 +76,7 @@ tasks {
     shadowJar {
         dependsOn(test)
         mustRunAfter(test)
+        relocate("com.zaxxer.hikari", "${pluginPackage}.lib.hikari")
     }
 
     test {

@@ -1,34 +1,30 @@
 package com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.service;
 
-import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.Injector;
 import com.github.theprogmatheus.mc.plugin.spigot.plugintemplate.lib.PluginService;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.plugin.Plugin;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToIntFunction;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-@Singleton
+
+@RequiredArgsConstructor
 public class MainService extends PluginService {
 
-    private final Injector injector;
     private final List<PluginService> services = new ArrayList<>();
-
+    private final Plugin plugin;
 
     /**
      * Register your services here
      */
     public void setupServices() {
-        addService(ConfigurationService.class, 10, 0);
-        addService(MessageService.class, 9, 0);
-        addService(DatabaseSQLService.class, 8, -8); // or DatabaseMongoService.class
-        addService(CommandService.class, 5, 0);
-        addService(ListenerService.class);
-        addService(APIService.class);
+        addService(new ConfigurationService(this.plugin, this.plugin.getLogger()), 10, 0);
+        addService(new MessageService(this.plugin, this.plugin.getLogger()), 9, 0);
+        addService(new DatabaseSQLService(this.plugin), 8, 0);
+        addService(new CommandService(this.plugin));
+        addService(new ListenerService(this.plugin));
     }
 
     @Override
@@ -60,16 +56,13 @@ public class MainService extends PluginService {
         return services;
     }
 
-    private void addService(Class<? extends PluginService> serviceClass) {
-        addService(serviceClass, 1, 1);
+    private void addService(PluginService service) {
+        addService(service, 1, 1);
     }
 
-    private void addService(Class<? extends PluginService> serviceClass, int startupPriority, int shutdownPriority) {
-        var service = this.injector.getInstance(serviceClass);
-
+    private void addService(PluginService service, int startupPriority, int shutdownPriority) {
         service.setStartupPriority(startupPriority);
         service.setShutdownPriority(shutdownPriority);
-
         this.services.add(service);
     }
 
