@@ -1,10 +1,10 @@
-# Config Template
+# =====================[ Config version ]===================== #
 config-version: 1.0
 
 # =====================[ Lang settings ]===================== #
 lang:
   # Define the default lang
-  default: "en_us"
+  default: "pt_br"
   #Define if you want to use individual lang per player settings
   individual: true
 
@@ -15,7 +15,7 @@ database:
   type: "SQLite"
 
   # Defines the prefix used in the names of tables in the database.
-  prefix: "plugintemplate_"
+  prefix: "hskills_"
 
   # Sets the database address. (SQLite doesn't need this.)
   host: "localhost"

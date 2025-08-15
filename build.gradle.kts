@@ -3,17 +3,17 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-group = "com.github.theprogmatheus.mc.plugin.spigot"
+group = "com.github.theprogmatheus.mc.hunters.hskills"
 version = "1.0-SNAPSHOT"
 
 val pluginPackage = "${group}.plugintemplate"
-val pluginMain = "${pluginPackage}.PluginTemplate"
+val pluginMain = "${pluginPackage}.HSkills"
 val pluginName = project.name
 val pluginVersion = project.version
 val pluginAuthors = listOf("Sr_Edition", "TheProgMatheus")
 val apiVersion = "1.20"
-val pluginWebsite = "https://github.com/theprogmatheus/PluginTemplate"
-val pluginDescription = "Um template base para desenvolvimento de plugins"
+val pluginWebsite = "https://github.com/theprogmatheus/HSkills"
+val pluginDescription = "Sistema de habilidades com níveis, pontos de upgrade e recompensas, utilizando experiência global compartilhada entre todas as skills."
 val pluginLibraries = listOf<String>() // Repository: https://repo.papermc.io/
 
 repositories {

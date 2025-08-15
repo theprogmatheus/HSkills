@@ -1,5 +1,5 @@
 # pt_BR language file
 
-prefix: "&6[PluginTemplate] &f"
+prefix: "&6[HSkills] &f"
 command:
   template: "&aVocê executou o comando com sucesso. Plugin: {plugin}"
