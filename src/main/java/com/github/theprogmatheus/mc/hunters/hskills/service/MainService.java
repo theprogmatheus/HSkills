@@ -7,13 +7,16 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToIntFunction;
 
 
 @RequiredArgsConstructor
 public class MainService extends PluginService {
 
-    private final List<PluginService> services = new ArrayList<>();
+    private static final Map<Class<?>, PluginService> services = new ConcurrentHashMap<>();
+
     private final Plugin plugin;
 
     /**
@@ -50,7 +53,7 @@ public class MainService extends PluginService {
 
 
     private List<PluginService> orderedServices(ToIntFunction<? super PluginService> keyExtractor) {
-        var services = new ArrayList<>(this.services);
+        var services = new ArrayList<>(MainService.services.values());
         services.sort(Comparator.comparingInt(keyExtractor)
                 .reversed());
         return services;
@@ -63,8 +66,11 @@ public class MainService extends PluginService {
     private void addService(PluginService service, int startupPriority, int shutdownPriority) {
         service.setStartupPriority(startupPriority);
         service.setShutdownPriority(shutdownPriority);
-        this.services.add(service);
+        services.put(service.getClass(), service);
     }
 
+    public static <S extends PluginService> S getService(Class<S> serviceClass) {
+        return (S) services.get(serviceClass);
+    }
 
 }

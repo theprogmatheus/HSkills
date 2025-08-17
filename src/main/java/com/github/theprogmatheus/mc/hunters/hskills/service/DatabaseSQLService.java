@@ -3,8 +3,11 @@ package com.github.theprogmatheus.mc.hunters.hskills.service;
 import com.github.theprogmatheus.mc.hunters.hskills.config.env.Config;
 import com.github.theprogmatheus.mc.hunters.hskills.database.DatabaseSQLManager;
 import com.github.theprogmatheus.mc.hunters.hskills.database.query.SqlQueryLoader;
+import com.github.theprogmatheus.mc.hunters.hskills.database.repository.PlayerDataRepository;
+import com.github.theprogmatheus.mc.hunters.hskills.database.repository.impl.PlayerDataRepositoryImpl;
 import com.github.theprogmatheus.mc.hunters.hskills.lib.PluginService;
 import com.zaxxer.hikari.HikariConfig;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.plugin.Plugin;
 
@@ -14,11 +17,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
+@Getter
 public class DatabaseSQLService extends PluginService {
 
 
     private final Plugin plugin;
     private DatabaseSQLManager databaseManager;
+    private PlayerDataRepository playerDataRepository;
+
 
     @Override
     public void startup() {
@@ -28,7 +34,7 @@ public class DatabaseSQLService extends PluginService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        this.playerDataRepository = new PlayerDataRepositoryImpl(this.databaseManager);
     }
 
     @Override

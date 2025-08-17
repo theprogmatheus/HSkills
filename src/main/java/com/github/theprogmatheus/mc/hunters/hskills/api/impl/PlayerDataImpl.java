@@ -17,6 +17,15 @@ public class PlayerDataImpl implements PlayerData {
     private int level;
     private int upgradePoints;
 
+    public PlayerDataImpl(UUID id, Function<Integer, Double> xpToNextLevelCalculator, Map<Skill, Integer> skillLevels, double exp, int level, int upgradePoints) {
+        this.id = id;
+        this.xpToNextLevelCalculator = xpToNextLevelCalculator;
+        this.skillLevels = skillLevels;
+        this.exp = exp;
+        this.level = level;
+        this.upgradePoints = upgradePoints;
+    }
+
     public PlayerDataImpl(UUID id, Function<Integer, Double> xpToNextLevelCalculator) {
         this.id = id;
         this.xpToNextLevelCalculator = xpToNextLevelCalculator;
