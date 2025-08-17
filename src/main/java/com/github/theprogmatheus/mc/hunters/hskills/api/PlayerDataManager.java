@@ -12,5 +12,4 @@ public interface PlayerDataManager {
         return getPlayerData(player.getUniqueId());
     }
 
-
 }

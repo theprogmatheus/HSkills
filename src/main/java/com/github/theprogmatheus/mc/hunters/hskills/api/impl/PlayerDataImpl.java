@@ -2,12 +2,14 @@ package com.github.theprogmatheus.mc.hunters.hskills.api.impl;
 
 import com.github.theprogmatheus.mc.hunters.hskills.api.PlayerData;
 import com.github.theprogmatheus.mc.hunters.hskills.api.Skill;
+import lombok.Data;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+@Data
 public class PlayerDataImpl implements PlayerData {
 
     private final UUID id;
