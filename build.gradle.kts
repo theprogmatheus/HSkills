@@ -3,10 +3,10 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
-group = "com.github.theprogmatheus.mc.hunters.hskills"
+group = "com.github.theprogmatheus.mc.hunters"
 version = "1.0-SNAPSHOT"
 
-val pluginPackage = "${group}.plugintemplate"
+val pluginPackage = "${group}.hskills"
 val pluginMain = "${pluginPackage}.HSkills"
 val pluginName = project.name
 val pluginVersion = project.version
