@@ -36,6 +36,39 @@ public interface PlayerData {
     void removeExp(double exp);
 
     /**
+     * @return the current level
+     */
+    int getLevel();
+
+    /**
+     * Define new level to player
+     *
+     * @param level - the new level
+     */
+    void setLevel(int level);
+
+    /**
+     * Add level to player
+     *
+     * @param level - the level to add
+     */
+    void addLevel(int level);
+
+    /**
+     * Remove level from player
+     *
+     * @param level - the level to remove
+     */
+    void removeLevel(int level);
+
+    /**
+     * processes the player's level up
+     *
+     * @return the current level after process
+     */
+    int levelUP();
+
+    /**
      * @param skill - the skill type
      * @return the skill level
      */
@@ -82,5 +115,10 @@ public interface PlayerData {
      * @return the new level
      */
     int upgradeSkill(Skill skill);
+
+    /**
+     * @return The exp needed to upgrade to the next level.
+     */
+    double getXpToNextLevel();
 
 }
