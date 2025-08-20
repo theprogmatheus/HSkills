@@ -62,17 +62,19 @@ public class PlayerDataManagerImpl implements PlayerDataManager {
         if (playerData != null)
             return playerData;
 
+        return createPlayerData(id);
+    }
 
-        playerData = new PlayerDataImpl(
+    @Override
+    public PlayerData createPlayerData(UUID id) {
+        PlayerDataImpl playerData = new PlayerDataImpl(
                 id,
-                level -> 50 * Math.pow(level, 2) + 500 * level + 1000,
                 new HashMap<>(),
                 0,
                 0,
                 0,
                 this.writeBehindBuffer
         );
-
         this.playerDataCache.put(id, playerData);
         return playerData;
     }

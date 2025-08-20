@@ -18,4 +18,11 @@ public interface PlayerDataManager {
     default PlayerData getOrCreatePlayerData(Player player) {
         return getOrCreatePlayerData(player.getUniqueId());
     }
+
+    PlayerData createPlayerData(UUID id);
+
+    default PlayerData createPlayerData(Player player) {
+        return createPlayerData(player.getUniqueId());
+    }
+
 }

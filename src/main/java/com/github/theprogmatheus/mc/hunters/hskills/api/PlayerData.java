@@ -1,8 +1,11 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api;
 
 import java.util.UUID;
+import java.util.function.Function;
 
 public interface PlayerData {
+
+    Function<Integer, Double> defaultXPCalculator = level -> 1000 * Math.pow(1.15, level);
 
     /**
      * @return the player uuid

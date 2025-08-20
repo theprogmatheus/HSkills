@@ -8,13 +8,11 @@ import lombok.Data;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 @Data
 public class PlayerDataImpl implements PlayerData {
 
     private final UUID id;
-    private final Function<Integer, Double> xpToNextLevelCalculator;
     private final Map<Skill, Integer> skillLevels;
     private double exp;
     private int level;
@@ -23,7 +21,6 @@ public class PlayerDataImpl implements PlayerData {
 
     public PlayerDataImpl(
             UUID id,
-            Function<Integer, Double> xpToNextLevelCalculator,
             Map<Skill, Integer> skillLevels,
             double exp,
             int level,
@@ -31,7 +28,6 @@ public class PlayerDataImpl implements PlayerData {
             WriteBehindBuffer<UUID, PlayerDataImpl> writeBehindBuffer
     ) {
         this.id = id;
-        this.xpToNextLevelCalculator = xpToNextLevelCalculator;
         this.skillLevels = skillLevels;
         this.exp = exp;
         this.level = level;
@@ -39,9 +35,8 @@ public class PlayerDataImpl implements PlayerData {
         this.writeBehindBuffer = writeBehindBuffer;
     }
 
-    public PlayerDataImpl(UUID id, Function<Integer, Double> xpToNextLevelCalculator) {
+    public PlayerDataImpl(UUID id) {
         this.id = id;
-        this.xpToNextLevelCalculator = xpToNextLevelCalculator;
         this.skillLevels = new ConcurrentHashMap<>();
         this.exp = 0;
         this.level = 0;
@@ -169,6 +164,6 @@ public class PlayerDataImpl implements PlayerData {
 
     @Override
     public double getXpToNextLevel() {
-        return this.xpToNextLevelCalculator.apply(this.level);
+        return defaultXPCalculator.apply(this.level);
     }
 }

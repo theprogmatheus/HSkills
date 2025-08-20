@@ -1,5 +1,6 @@
 package com.github.theprogmatheus.mc.hunters.hskills.listener;
 
+import com.github.theprogmatheus.mc.hunters.hskills.api.HSkillsAPI;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -9,11 +10,11 @@ public class PlayerJoinQuitListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-      // load playerdata
+        HSkillsAPI.getPlayerDataManager()
+                .getOrCreatePlayerData(event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // save playerdata
     }
 }

@@ -47,7 +47,6 @@ public class PlayerDataCache extends LinkedHashMap<UUID, PlayerDataImpl> {
         return this.repository.findById(id)
                 .map(entity -> new PlayerDataImpl(
                         id,
-                        level -> 100.0 * level * Math.log(level + 1),
                         entity.skillLevels(),
                         entity.exp(),
                         entity.level(),

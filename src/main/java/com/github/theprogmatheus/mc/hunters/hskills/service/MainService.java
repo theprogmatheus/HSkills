@@ -28,6 +28,7 @@ public class MainService extends PluginService {
         addService(new DatabaseSQLService(this.plugin), 8, 0);
         addService(new CommandService(this.plugin));
         addService(new ListenerService(this.plugin));
+        addService(new APIService(this.plugin));
     }
 
     @Override
