@@ -1,6 +1,5 @@
 package com.github.theprogmatheus.mc.hunters.hskills.service;
 
-import com.github.theprogmatheus.mc.hunters.hskills.api.PlayerDataManager;
 import com.github.theprogmatheus.mc.hunters.hskills.api.impl.PlayerDataManagerImpl;
 import com.github.theprogmatheus.mc.hunters.hskills.lib.PluginService;
 import lombok.Getter;
@@ -11,7 +10,7 @@ public class APIService extends PluginService {
 
 
     private final Plugin plugin;
-    private PlayerDataManager playerDataManager;
+    private PlayerDataManagerImpl playerDataManager;
 
     public APIService(Plugin plugin) {
         this.plugin = plugin;
@@ -20,5 +19,10 @@ public class APIService extends PluginService {
     @Override
     public void startup() {
         this.playerDataManager = new PlayerDataManagerImpl(this.plugin);
+    }
+
+    @Override
+    public void shutdown() {
+        this.playerDataManager.getWriteBehindBuffer().close();
     }
 }

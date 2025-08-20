@@ -2,8 +2,12 @@ package com.github.theprogmatheus.mc.hunters.hskills.api.impl;
 
 import com.github.theprogmatheus.mc.hunters.hskills.api.PlayerData;
 import com.github.theprogmatheus.mc.hunters.hskills.api.Skill;
+import com.github.theprogmatheus.mc.hunters.hskills.event.PlayerGainExpEvent;
+import com.github.theprogmatheus.mc.hunters.hskills.event.PlayerLevelUpEvent;
+import com.github.theprogmatheus.mc.hunters.hskills.event.PlayerLossExpEvent;
 import com.github.theprogmatheus.mc.hunters.hskills.util.WriteBehindBuffer;
 import lombok.Data;
+import org.bukkit.Bukkit;
 
 import java.util.Map;
 import java.util.UUID;
@@ -56,20 +60,25 @@ public class PlayerDataImpl implements PlayerData {
 
     @Override
     public void setExp(double exp) {
+        double oldExp = this.exp;
         this.exp = exp;
+        if (this.exp > oldExp) {
+            callGainExpEvent(this.exp - oldExp);
+            this.checkLevelUP();
+        } else if (this.exp < oldExp) {
+            callLossExpEvent(oldExp - this.exp);
+        }
         this.persist();
     }
 
     @Override
     public void addExp(double exp) {
-        this.exp += exp;
-        this.persist();
+        setExp(this.exp + exp);
     }
 
     @Override
     public void removeExp(double exp) {
-        this.exp -= exp;
-        this.persist();
+        setExp(this.exp - exp);
     }
 
     @Override
@@ -85,27 +94,24 @@ public class PlayerDataImpl implements PlayerData {
 
     @Override
     public void addLevel(int level) {
-        this.level += level;
-        this.persist();
+        setLevel(this.level + level);
     }
 
     @Override
     public void removeLevel(int level) {
-        this.level -= level;
-        this.persist();
+        setLevel(this.level - level);
     }
 
     @Override
     public int levelUP() {
         double xpNeeded = getXpToNextLevel();
-
         if (this.exp >= xpNeeded) {
             this.exp -= xpNeeded;
             this.level++;
             this.upgradePoints++;
+            this.persist();
+            this.callLevelUPEvent(this.level - 1, this.level);
         }
-
-        this.persist();
         return this.level;
     }
 
@@ -165,5 +171,36 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public double getXpToNextLevel() {
         return defaultXPCalculator.apply(this.level);
+    }
+
+    private void checkLevelUP() {
+        int oldLevel = this.level;
+
+        double xpNeeded;
+        while (this.exp >= (xpNeeded = getXpToNextLevel())) {
+            this.exp -= xpNeeded;
+            this.level++;
+            this.upgradePoints++;
+        }
+
+        if (oldLevel < this.level) {
+            this.persist();
+            this.callLevelUPEvent(oldLevel, this.level);
+        }
+    }
+
+    private void callGainExpEvent(double expGained) {
+        PlayerGainExpEvent playerGainExpEvent = new PlayerGainExpEvent(this, expGained);
+        Bukkit.getPluginManager().callEvent(playerGainExpEvent);
+    }
+
+    private void callLossExpEvent(double expLoss) {
+        PlayerLossExpEvent playerLossExpEvent = new PlayerLossExpEvent(this, expLoss);
+        Bukkit.getPluginManager().callEvent(playerLossExpEvent);
+    }
+
+    private void callLevelUPEvent(int oldLevel, int newLevel) {
+        PlayerLevelUpEvent playerLevelUpEvent = new PlayerLevelUpEvent(this, oldLevel, newLevel);
+        Bukkit.getPluginManager().callEvent(playerLevelUpEvent);
     }
 }
