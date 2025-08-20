@@ -1,15 +1,12 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api.impl;
 
-import com.github.theprogmatheus.mc.hunters.hskills.database.entity.PlayerDataEntity;
 import com.github.theprogmatheus.mc.hunters.hskills.database.repository.PlayerDataRepository;
+import com.github.theprogmatheus.mc.hunters.hskills.util.WriteBehindBuffer;
 import lombok.Getter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public class PlayerDataCache extends LinkedHashMap<UUID, PlayerDataImpl> {
@@ -18,14 +15,13 @@ public class PlayerDataCache extends LinkedHashMap<UUID, PlayerDataImpl> {
 
     private final int capacity;
     private final PlayerDataRepository repository;
-    private final ScheduledExecutorService executorService;
+    private final WriteBehindBuffer<UUID, PlayerDataImpl> writeBehindBuffer;
 
-    public PlayerDataCache(int capacity, PlayerDataRepository repository) {
+    public PlayerDataCache(int capacity, PlayerDataRepository repository, WriteBehindBuffer<UUID, PlayerDataImpl> writeBehindBuffer) {
         super(capacity, 0.75f, true);
         this.capacity = capacity;
         this.repository = repository;
-        this.executorService = Executors.newSingleThreadScheduledExecutor();
-        this.executorService.scheduleWithFixedDelay(this::persistAll, FLUSH_INTERVAL, FLUSH_INTERVAL, TimeUnit.SECONDS);
+        this.writeBehindBuffer = writeBehindBuffer;
     }
 
     @Override
@@ -42,33 +38,10 @@ public class PlayerDataCache extends LinkedHashMap<UUID, PlayerDataImpl> {
     protected boolean removeEldestEntry(Map.Entry<UUID, PlayerDataImpl> eldest) {
         boolean shouldRemove = size() > capacity;
         if (shouldRemove) {
-            this.executorService.submit(() -> persistPlayer(eldest.getValue()));
+            eldest.getValue().persist();
         }
         return shouldRemove;
     }
-
-    private void persistAll() {
-        this.repository.save(
-                this.values().stream().map(playerData -> new PlayerDataEntity(
-                        playerData.getId(),
-                        playerData.getSkillLevels(),
-                        playerData.getLevel(),
-                        playerData.getExp(),
-                        playerData.getUpgradePoints()
-                )).toList());
-    }
-
-    private void persistPlayer(PlayerDataImpl player) {
-        PlayerDataEntity entity = new PlayerDataEntity(
-                player.getId(),
-                player.getSkillLevels(),
-                player.getLevel(),
-                player.getExp(),
-                player.getUpgradePoints()
-        );
-        this.repository.save(entity);
-    }
-
 
     private PlayerDataImpl loadFromDatabase(UUID id) {
         return this.repository.findById(id)
@@ -78,20 +51,9 @@ public class PlayerDataCache extends LinkedHashMap<UUID, PlayerDataImpl> {
                         entity.skillLevels(),
                         entity.exp(),
                         entity.level(),
-                        entity.upgradePoints()
+                        entity.upgradePoints(),
+                        this.writeBehindBuffer
                 ))
                 .orElse(null);
     }
-
-    public void shutdown() {
-        try {
-            this.executorService.shutdown();
-            if (!this.executorService.awaitTermination(30, TimeUnit.SECONDS))
-                this.executorService.shutdownNow();
-        } catch (InterruptedException ignored) {
-            this.executorService.shutdownNow();
-        }
-        persistAll();
-    }
-
 }
