@@ -1,14 +1,12 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api.impl;
 
 import com.github.theprogmatheus.mc.hunters.hskills.api.Skill;
-import com.github.theprogmatheus.mc.hunters.hskills.api.SkillHandler;
 import com.github.theprogmatheus.mc.hunters.hskills.api.SkillManager;
 import com.github.theprogmatheus.mc.hunters.hskills.api.SkillType;
 import com.github.theprogmatheus.mc.hunters.hskills.api.impl.skills.RepairSkillImpl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collection;
@@ -28,9 +26,7 @@ public class SkillManagerImpl implements SkillManager {
     @Override
     public void registerSkill(Skill skill) {
         this.skills.put(skill.getType(), skill);
-        for (SkillHandler<? extends Event> handler : skill.getHandlers()) {
-            Bukkit.getPluginManager().registerEvents(handler, plugin);
-        }
+        Bukkit.getPluginManager().registerEvents(skill, plugin);
     }
 
     @Override

@@ -1,11 +1,9 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api;
 
-import com.google.common.collect.ImmutableList;
-import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
 
-public interface Skill {
+public interface Skill extends Listener {
 
     SkillType getType();
 
-    ImmutableList<SkillHandler<? extends Event>> getHandlers();
 }

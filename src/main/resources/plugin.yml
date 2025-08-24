@@ -7,3 +7,5 @@ authors:
 website: ${website}
 description: ${description}
 libraries: ${libraries}
+commands:
+  skillup:

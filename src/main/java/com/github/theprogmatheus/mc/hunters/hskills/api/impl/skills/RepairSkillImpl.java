@@ -1,16 +1,14 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api.impl.skills;
 
 import com.github.theprogmatheus.mc.hunters.hskills.api.HSkillsAPI;
-import com.github.theprogmatheus.mc.hunters.hskills.api.SkillHandler;
 import com.github.theprogmatheus.mc.hunters.hskills.api.SkillType;
 import com.github.theprogmatheus.mc.hunters.hskills.api.skills.RepairSkill;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -36,14 +34,7 @@ public class RepairSkillImpl implements RepairSkill {
                     .put(6, this::handleLevel6)
                     .build();
 
-
-    @Override
-    public ImmutableList<SkillHandler<? extends Event>> getHandlers() {
-        return ImmutableList.of(
-                new SkillHandler<>(PlayerInteractEvent.class, this::onPlayerInteract)
-        );
-    }
-
+    @EventHandler
     private void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK
                 && event.getClickedBlock() != null
