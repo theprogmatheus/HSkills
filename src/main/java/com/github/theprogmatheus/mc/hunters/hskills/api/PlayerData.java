@@ -72,18 +72,18 @@ public interface PlayerData {
     int levelUP();
 
     /**
-     * @param skill - the skill type
+     * @param skillType - the skill type
      * @return the skill level
      */
-    int getSkillLevel(Skill skill);
+    int getSkillLevel(SkillType skillType);
 
     /**
      * Define new skill level
      *
-     * @param skill - the skill type
+     * @param skillType - the skill type
      * @param level - the new level
      */
-    void setSkillLevel(Skill skill, int level);
+    void setSkillLevel(SkillType skillType, int level);
 
     /**
      * @return the current upgrade points
@@ -114,10 +114,10 @@ public interface PlayerData {
     /**
      * Upgrade skill level
      *
-     * @param skill - the skill type
+     * @param skillType - the skill type
      * @return the new level
      */
-    int upgradeSkill(Skill skill);
+    int upgradeSkill(SkillType skillType);
 
     /**
      * @return The exp needed to upgrade to the next level.

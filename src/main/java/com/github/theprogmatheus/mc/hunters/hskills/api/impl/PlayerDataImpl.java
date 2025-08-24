@@ -1,7 +1,7 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api.impl;
 
 import com.github.theprogmatheus.mc.hunters.hskills.api.PlayerData;
-import com.github.theprogmatheus.mc.hunters.hskills.api.Skill;
+import com.github.theprogmatheus.mc.hunters.hskills.api.SkillType;
 import com.github.theprogmatheus.mc.hunters.hskills.event.PlayerGainExpEvent;
 import com.github.theprogmatheus.mc.hunters.hskills.event.PlayerLevelUpEvent;
 import com.github.theprogmatheus.mc.hunters.hskills.event.PlayerLossExpEvent;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerDataImpl implements PlayerData {
 
     private final UUID id;
-    private final Map<Skill, Integer> skillLevels;
+    private final Map<SkillType, Integer> skillLevels;
     private double exp;
     private int level;
     private int upgradePoints;
@@ -25,7 +25,7 @@ public class PlayerDataImpl implements PlayerData {
 
     public PlayerDataImpl(
             UUID id,
-            Map<Skill, Integer> skillLevels,
+            Map<SkillType, Integer> skillLevels,
             double exp,
             int level,
             int upgradePoints,
@@ -116,13 +116,13 @@ public class PlayerDataImpl implements PlayerData {
     }
 
     @Override
-    public int getSkillLevel(Skill skill) {
-        return this.skillLevels.getOrDefault(skill, 0);
+    public int getSkillLevel(SkillType skillType) {
+        return this.skillLevels.getOrDefault(skillType, 0);
     }
 
     @Override
-    public void setSkillLevel(Skill skill, int level) {
-        this.skillLevels.put(skill, level);
+    public void setSkillLevel(SkillType skillType, int level) {
+        this.skillLevels.put(skillType, level);
         this.persist();
     }
 
@@ -150,8 +150,8 @@ public class PlayerDataImpl implements PlayerData {
     }
 
     @Override
-    public int upgradeSkill(Skill skill) {
-        int skillLevel = getSkillLevel(skill);
+    public int upgradeSkill(SkillType skillType) {
+        int skillLevel = getSkillLevel(skillType);
 
         if (this.upgradePoints <= 0)
             return skillLevel;
@@ -159,7 +159,7 @@ public class PlayerDataImpl implements PlayerData {
         this.upgradePoints--;
 
         int newSkillLevel = skillLevel + 1;
-        setSkillLevel(skill, newSkillLevel);
+        setSkillLevel(skillType, newSkillLevel);
         return newSkillLevel;
     }
 

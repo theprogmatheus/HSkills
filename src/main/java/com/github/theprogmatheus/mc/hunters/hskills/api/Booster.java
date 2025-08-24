@@ -1,9 +1,9 @@
 package com.github.theprogmatheus.mc.hunters.hskills.api;
 
 /**
- * @param skill
+ * @param skillType
  * @param multiplier
  * @param duration
  */
-public record Booster(Skill skill, double multiplier, long duration) {
+public record Booster(SkillType skillType, double multiplier, long duration) {
 }

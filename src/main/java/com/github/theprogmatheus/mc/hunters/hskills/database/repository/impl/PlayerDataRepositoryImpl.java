@@ -1,6 +1,6 @@
 package com.github.theprogmatheus.mc.hunters.hskills.database.repository.impl;
 
-import com.github.theprogmatheus.mc.hunters.hskills.api.Skill;
+import com.github.theprogmatheus.mc.hunters.hskills.api.SkillType;
 import com.github.theprogmatheus.mc.hunters.hskills.database.DatabaseSQLManager;
 import com.github.theprogmatheus.mc.hunters.hskills.database.entity.PlayerDataEntity;
 import com.github.theprogmatheus.mc.hunters.hskills.database.repository.PlayerDataRepository;
@@ -102,16 +102,16 @@ public class PlayerDataRepositoryImpl implements PlayerDataRepository {
     }
 
 
-    private Map<Skill, Integer> deserialize(byte[] serialized) {
+    private Map<SkillType, Integer> deserialize(byte[] serialized) {
         try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(serialized);
              DataInputStream dataInputStream = new DataInputStream(byteArrayInputStream)) {
-            Map<Skill, Integer> map = new HashMap<>();
+            Map<SkillType, Integer> map = new HashMap<>();
 
             int size = dataInputStream.readInt();
             for (int i = 0; i < size; i++) {
-                Skill skill = Skill.fromId(dataInputStream.readInt());
+                SkillType skillType = SkillType.fromId(dataInputStream.readInt());
                 int skillLevel = dataInputStream.readInt();
-                map.put(skill, skillLevel);
+                map.put(skillType, skillLevel);
             }
 
             return map;
@@ -120,11 +120,11 @@ public class PlayerDataRepositoryImpl implements PlayerDataRepository {
         }
     }
 
-    private byte[] serialize(Map<Skill, Integer> skillLevels) {
+    private byte[] serialize(Map<SkillType, Integer> skillLevels) {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
             dataOutputStream.writeInt(skillLevels.size());
-            for (Map.Entry<Skill, Integer> entry : skillLevels.entrySet()) {
+            for (Map.Entry<SkillType, Integer> entry : skillLevels.entrySet()) {
                 dataOutputStream.writeInt(entry.getKey().getId());
                 dataOutputStream.writeInt(entry.getValue());
             }

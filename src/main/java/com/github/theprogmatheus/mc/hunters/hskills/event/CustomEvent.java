@@ -8,14 +8,11 @@ import java.util.Map;
 
 public abstract class CustomEvent extends Event {
 
-    private static final Map<Class<?>, HandlerList> handlerLists = new HashMap<>();
+    protected static final Map<Class<?>, HandlerList> handlerLists = new HashMap<>();
 
     @Override
     public HandlerList getHandlers() {
-        var handlerList = handlerLists.get(getClass());
-        if (handlerList == null)
-            handlerLists.put(getClass(), handlerList = new HandlerList());
-        return handlerList;
+        return handlerLists.computeIfAbsent(getClass(), key -> new HandlerList());
     }
 
 }

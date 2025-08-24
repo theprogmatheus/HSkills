@@ -2,7 +2,7 @@ package com.github.theprogmatheus.mc.hunters.hskills.service;
 
 import com.github.theprogmatheus.mc.hunters.hskills.lib.PluginService;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,7 +17,7 @@ public class MainService extends PluginService {
 
     private static final Map<Class<?>, PluginService> services = new ConcurrentHashMap<>();
 
-    private final Plugin plugin;
+    private final JavaPlugin plugin;
 
     /**
      * Register your services here

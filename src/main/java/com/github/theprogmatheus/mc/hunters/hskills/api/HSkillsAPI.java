@@ -9,4 +9,8 @@ public class HSkillsAPI {
         return MainService.getService(APIService.class).getPlayerDataManager();
     }
 
+    public static SkillManager getSkillManager() {
+        return MainService.getService(APIService.class).getSkillManager();
+    }
+
 }
