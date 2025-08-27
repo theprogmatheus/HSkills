@@ -3,7 +3,7 @@ package com.github.theprogmatheus.mc.hunters.hskills.api.impl;
 import com.github.theprogmatheus.mc.hunters.hskills.api.Skill;
 import com.github.theprogmatheus.mc.hunters.hskills.api.SkillManager;
 import com.github.theprogmatheus.mc.hunters.hskills.api.SkillType;
-import com.github.theprogmatheus.mc.hunters.hskills.api.impl.skills.RepairSkillImpl;
+import com.github.theprogmatheus.mc.hunters.hskills.api.impl.skills.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.bukkit.Bukkit;
@@ -20,6 +20,11 @@ public class SkillManagerImpl implements SkillManager {
 
     public SkillManagerImpl(JavaPlugin plugin) {
         this.plugin = plugin;
+        registerSkill(new AlchemySkillImpl());
+        registerSkill(new AttackSkillImpl());
+        registerSkill(new DefenseSkillImpl());
+        registerSkill(new FishingSkillImpl());
+        registerSkill(new GatheringSkillImpl());
         registerSkill(new RepairSkillImpl());
     }
 
