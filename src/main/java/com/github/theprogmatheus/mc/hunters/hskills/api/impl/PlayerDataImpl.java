@@ -153,10 +153,21 @@ public class PlayerDataImpl implements PlayerData {
     public int upgradeSkill(SkillType skillType) {
         int skillLevel = getSkillLevel(skillType);
 
-        if (this.upgradePoints <= 0)
+        int upgradeCost = 1;
+
+        int[] upgradeCosts = skillType.getUpgradeCosts();
+        if (upgradeCosts.length > 0) {
+            if (skillLevel >= upgradeCosts.length) {
+                upgradeCost = upgradeCosts[upgradeCosts.length - 1];
+            } else {
+                upgradeCost = upgradeCosts[skillLevel];
+            }
+        }
+
+        if (this.upgradePoints < upgradeCost)
             return skillLevel;
 
-        this.upgradePoints--;
+        this.upgradePoints -= upgradeCost;
 
         int newSkillLevel = skillLevel + 1;
         setSkillLevel(skillType, newSkillLevel);
