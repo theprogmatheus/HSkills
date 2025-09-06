@@ -23,6 +23,10 @@ repositories {
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
     maven { url = uri("https://repo.papermc.io/repository/maven-public/") }
+    maven {
+        name = "nexomcReleases"
+        url = uri("https://repo.nexomc.com/releases")
+    }
 }
 
 dependencies {
@@ -30,6 +34,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
 
+    implementation("me.devnatan:inventory-framework-platform-bukkit:3.5.2")
     implementation("com.zaxxer:HikariCP:7.0.1") {
         isTransitive = false
     }
@@ -77,6 +82,8 @@ tasks {
         dependsOn(test)
         mustRunAfter(test)
         relocate("com.zaxxer.hikari", "${pluginPackage}.lib.hikari")
+        relocate("com.tcoded.folialib", "${pluginPackage}.lib.folialib")
+        relocate("me.devnatan.inventoryframework", "${pluginPackage}.lib.inventoryframework")
     }
 
     test {
