@@ -4,6 +4,9 @@ import com.github.theprogmatheus.mc.hunters.hskills.api.HSkillsAPI;
 import com.github.theprogmatheus.mc.hunters.hskills.api.PlayerData;
 import com.github.theprogmatheus.mc.hunters.hskills.api.PlayerDataManager;
 import com.github.theprogmatheus.mc.hunters.hskills.api.SkillType;
+import com.github.theprogmatheus.mc.hunters.hskills.lib.invflow.example.MenuTest;
+import com.github.theprogmatheus.mc.hunters.hskills.service.APIService;
+import com.github.theprogmatheus.mc.hunters.hskills.service.MainService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,6 +22,9 @@ public class UpgradeCommand extends AbstractCommand {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player player) {
+
+            MainService.getService(APIService.class).getInvFlow().open(player, MenuTest.class);
+
             if (args.length < 1)
                 return false;
 
